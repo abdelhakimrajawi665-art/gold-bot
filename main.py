@@ -1,4 +1,9 @@
-import time, requests, os, yfinance as yf, pandas as pd
+import time, requests, os, yfinance as yf, threading
+from flask import Flask
+app = Flask(__name__)
+@app.route('/')
+def home(): return "Bot is running!"
+threading.Thread(target=lambda: app.run(host='0.0.0.0', port=int(os.environ.get("PORT", 10000)))).start()
 TOKEN = os.getenv("TOKEN")
 CHAT_ID = os.getenv("CHAT_ID")
 def send(msg):
@@ -30,7 +35,7 @@ while True:
         typ, price, tp, sl, rsi = get_signal()
         if typ and typ != last_signal:
             emoji = "🟢" if typ == "BUY" else "🔴"
-            msg = f"{emoji} *صفقة جديدة - GOLD SCALPING M15*\n\n📊 النوع: {typ}\n💰 الدخول: {price:.2f}\n🎯 الهدف TP: {tp:.2f}\n🛑 وقف الخسارة SL: {sl:.2f}\n📈 RSI: {rsi:.1f}\n⏱ الفريم: 15 دقيقة"
+            msg = f"{emoji} *صفقة جديدة - GOLD SCALPING M15*\n\n📊 النوع: {typ}\n💰 الدخول: {price:.2f}\n🎯 الهدف TP: {tp:.2f}\n🛑 وقف الخسارة SL: {sl:.2f}\n📈 RSI: {rsi:.1f}"
             send(msg)
             last_signal = typ
         time.sleep(900)
